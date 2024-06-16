@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <!-- Bootstrap -->
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <title>Detail Siswa</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<style>
+    .custom-table {
+        width: 50%; 
+        height: 300px; 
+        margin-left: auto;
+        margin-right: auto;
+
+    }
+</style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-uppercase"></nav>
+    <!-- Close Navbar -->
+<!-- MAIN -->
+<main>
+        <h1 class="title">USER</h1>
+        <ul class="breadcrumbs">
+          <li><a href="#">Home</a></li>
+          <li class="divider">/</li>
+          <li><a href="/user">User</a></li>
+          <li class="divider">/</li>
+          <li><a href="#" class="active">Detail Siswa</a></li>
+        </ul>
+
+       <div class="row my-2">
+           <div class="col-md">
+               <h3 class="fw-bold text-uppercase"></i>&nbsp;Detail Data Siswa</h3>
+           </div>
+           <hr>
+       </div>
+       <a href="/user" class="btn btn-secondary">Kembali</a>
+    <div class="table-responsive">
+        <table class="table table-bordered custom-table">
+            <tr align="center">
+                <td colspan="2"><img src="{{ url_for('static', filename=siswa['gambar'].replace('static', '')) }}" width="30%"></td>
+            </tr>
+            <tr>
+                <th width="40%">NISN</th>
+                <td width="60%">{{ siswa.nisn }}</td>
+            </tr>
+            <tr>
+                <th width="40%">Nama</th>
+                <td width="60%">{{ siswa.nama }}</td>
+            </tr>
+            <tr>
+                <th width="40%">Tempat dan Tanggal Lahir</th>
+                <td width="60%">{{ siswa.tempat_lahir }}, {{ siswa.tanggal_lahir.strftime('%d %b %Y') }}</td>
+            </tr>
+            <tr>
+                <th width="40%">Jenis Kelamin</th>
+                <td width="60%">{{ siswa.jenis_kelamin }}</td>
+            </tr>
+            <tr>
+                <th width="40%">Jurusan</th>
+                <td width="60%">{{ siswa.jurusan }}</td>
+            </tr>
+            <tr>
+                <th width="40%">E-Mail</th>
+                <td width="60%">{{ siswa.email }}</td>
+            </tr>
+            <tr>
+                <th width="40%">Alamat</th>
+                <td width="60%">{{ siswa.alamat }}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

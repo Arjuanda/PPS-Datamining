@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!-- Theme style -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <!-- Bootstrap -->
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <title>Tambah Data</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-uppercase"></nav>
+    <!-- Close Navbar -->
+<!-- MAIN -->
+<main>
+        <h1 class="title">PROGRAM STUDI</h1>
+        <ul class="breadcrumbs">
+          <li><a href="#">Home</a></li>
+          <li class="divider">/</li>
+          <li><a href="/prodi">Program Studi</a></li>
+          <li class="divider">/</li>
+          <li><a href="#" class="active">Tambah Program Studi</a></li>
+        </ul>
+
+       <div class="row my-2">
+           <div class="col-md">
+               <h3 class="fw-bold text-uppercase"></i>&nbsp;Tambah Data Program Studi</h3>
+           </div>
+           <hr>
+       </div>
+       <div class="row my-2">
+           <div class="col-md">
+            <form action="/prodi/tambah" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="nama" class="form-label">Nama Program Studi</label>
+                    <input type="text" class="form-control w-50" id="nama" name="nama" required>
+                </div>
+                <div class="mb-3">
+                    <label for="kode" class="form-label">Kode Program Studi</label>
+                    <input type="text" class="form-control w-50" id="kode" name="kode" required>
+                </div>
+                <div class="mb-3">
+                    <label for="link" class="form-label">Link</label>
+                    <input type="text" class="form-control w-50" id="link" name="link" required>
+                </div>
+                <div class="mb-3">
+                    <label for="gambar" class="form-label">Gambar</label>
+                    <input class="form-control w-50" id="gambar" name="gambar" type="file">
+                <hr>
+                <a href="/prodi" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+           </div>
+   </div>
+   </main>
+</body>
+   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</html>

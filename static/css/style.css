@@ -1,0 +1,36 @@
+.card p {
+    margin-top: -10px;
+    margin-bottom: 1px;
+}
+
+.row .card:hover {
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
+    transform: scale(1.02);
+}
+
+.carousel-item {
+    height: 400px;
+}
+
+.remove {
+    text-decoration: none;
+}
+
+hr {
+    width: 95%;
+    padding: 2px;
+}
+
+.nyala {
+    background-color: rgb(225, 220, 220);
+}
+
+.nyala:hover {
+    background-color: rgb(234, 230, 230);
+}
+
+.box {
+    background-color: rgb(240, 238, 238);
+    width: 95%;
+    padding: 5px;
+}

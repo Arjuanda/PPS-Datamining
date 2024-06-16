@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!-- Theme style -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <!-- Bootstrap -->
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <title>Ubah Data</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-uppercase"></nav>
+    <!-- Close Navbar -->
+<!-- MAIN -->
+<main>
+        <h1 class="title">NILAI</h1>
+        <ul class="breadcrumbs">
+          <li><a href="#">Home</a></li>
+          <li class="divider">/</li>
+          <li><a href="/nilai">Nilai</a></li>
+          <li class="divider">/</li>
+          <li><a href="#" class="active">Edit Data</a></li>
+        </ul>
+
+       <div class="row my-2">
+           <div class="col-md">
+               <h3 class="fw-bold text-uppercase"></i>&nbsp;Ubah Data</h3>
+           </div>
+           <hr>
+       </div>
+       <div class="row my-2">
+           <div class="col-md">
+            <form action="/nilai/edit/{{ nilai.id_nilai }}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="x1" class="form-label">(X1) Matematika </label>
+                    <input type="number" value="{{ nilai.x1 }}" class="form-control w-50" step="0.01" id="x1" name="x1">
+                </div>
+                <div class="mb-3">
+                    <label for="x2" class="form-label">(X2) Bahasa Indonesia </label>
+                    <input type="number" value="{{ nilai.x2 }}" class="form-control w-50" step="0.01" id="x2" name="x2">
+                </div>
+                <div class="mb-3">
+                    <label for="x3" class="form-label">(X3) Bahasa Inggris </label>
+                    <input type="number" value="{{ nilai.x3 }}" class="form-control w-50" step="0.01" id="x3" name="x3">
+                </div>
+                <div class="mb-3">
+                    <label for="x4" class="form-label">(X4) Fisika </label>
+                    <input type="number" value="{{ nilai.x4 }}" class="form-control w-50" step="0.01" id="x4" name="x4" >
+                </div>
+                <div class="mb-3">
+                    <label for="x5" class="form-label">(X5) Kimia </label>
+                    <input type="number" value="{{ nilai.x5 }}" class="form-control w-50" step="0.01" id="x5" name="x5" >
+                </div>
+                <div class="mb-3">
+                    <label for="x6" class="form-label">(X6) Biologi </label>
+                    <input type="number" value="{{ nilai.x6 }}" class="form-control w-50" step="0.01" id="x6" name="x6" >
+                </div>
+                <div class="mb-3">
+                    <label for="x7" class="form-label">(X7) Ekonomi </label>
+                    <input type="number" value="{{ nilai.x7 }}" class="form-control w-50" step="0.01" id="x7" name="x7" >
+                </div><div class="mb-3">
+                    <label for="x8" class="form-label">(X8) Geogrofi </label>
+                    <input type="number" value="{{ nilai.x8 }}" class="form-control w-50" step="0.01" id="x8" name="x8" >
+                </div>
+                <div class="mb-3">
+                    <label for="x9" class="form-label">(X9) Sosiologi </label>
+                    <input type="number" value="{{ nilai.x9 }}" class="form-control w-50" step="0.01" id="x9" name="x9" >
+                </div>
+                <div class="mb-3">
+                    <label for="x10" class="form-label">(X10) Sejarah </label>
+                    <input type="number" value="{{ nilai.x10 }}" class="form-control w-50" step="0.01" id="x10" name="x10" >
+                </div>
+                <hr>
+                <a href="/nilai" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+           </div>
+   </div>
+   </main>
+</body>
+   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</html>

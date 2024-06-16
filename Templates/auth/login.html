@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</head>
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='images/logo_poltek.png') }}");
+        background-size: cover;
+    }
+    .login-container{
+        margin-top: 20px;
+        background-color: #ffffff;
+        padding: 50px 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .login-container input {
+        padding: 15px 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        border: none;
+    }
+    button[type="submit"] {
+        padding: 10px 20px;
+        background-color: #36B4FF;
+        border: none;
+        color: #fff;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #25a0e7;
+    }
+
+</style>
+</head>
+<body>
+
+    <div class="container mt-5">
+    <div class="d-flex justify-content-center align-items-center">
+        
+        <div class="col-md-4 ">
+        <h3 class=" text-white text-center fw-bolder">ACCOUNT LOGIN</h3>
+            <div class="login-container">
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <ul>
+                            {% for category, message in messages %}
+                                {% if category == 'error' %}
+                                    <p style="color: red;">{{ message }}</p>
+                                {% elif category == 'success' %}
+                                    <p style="color: green;">{{ message }}</p>
+                                {% endif %}
+                                
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+
+                    <form action="/verifikasi-login" method="POST">
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Email" name="email" aria-describedby="emailHelp">
+                        </div>
+                        <div class="mb-3">
+                            <input type="password" class="form-control" placeholder="Password" name="password">
+                        </div>
+                        <div style="text-align:center">
+                            <button type="submit" class="btn btn-primary">LOGIN</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

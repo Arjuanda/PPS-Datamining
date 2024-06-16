@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!-- Theme style -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <!-- Bootstrap -->
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+    <title>Ubah Data</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark text-uppercase"></nav>
+    <!-- Close Navbar -->
+<!-- MAIN -->
+<main>
+        <h1 class="title">USER</h1>
+        <ul class="breadcrumbs">
+          <li><a href="#">Home</a></li>
+          <li class="divider">/</li>
+          <li><a href="/user">User</a></li>
+          <li class="divider">/</li>
+          <li><a href="#" class="active">Edit Data</a></li>
+        </ul>
+
+       <div class="row my-2">
+           <div class="col-md">
+               <h3 class="fw-bold text-uppercase"></i>&nbsp;Ubah Data Siswa</h3>
+           </div>
+           <hr>
+       </div>
+       <div class="row my-2">
+           <div class="col-md">
+            <form action="/siswa/edit/{{ siswa.id_siswa }}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="gambarLama" value="{{ siswa['gambar'] }}">
+                <div class="mb-3">
+                    <label for="nisn" class="form-label">NISN</label>
+                    <input type="number" value="{{ siswa.nisn }}" class="form-control w-50" id="nisn" name="nisn" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nama" class="form-label">Nama</label>
+                    <input type="text" value="{{ siswa.nama }}" class="form-control w-50" id="nama" name="nama" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-Mail</label>
+                    <input type="email" value="{{ siswa.email }}" class="form-control w-50" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" value="{{ siswa.password }}" class="form-control w-50" id="password" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
+                    <input type="text" value="{{ siswa.tempat_lahir }}" class="form-control w-50" id="tempat_lahir" name="tempat_lahir" required>
+                </div>
+                <div class="mb-3">
+                    <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                    <input type="date" value="{{ siswa.tanggal_lahir }}" class="form-control w-50" id="tanggal_lahir" name="tanggal_lahir" required>
+                </div>
+                <div class="mb-3">
+                    <label>Jenis Kelamin</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="jenis_kelamin" id="Laki-Laki" value="Laki - Laki" {% if siswa['jenis_kelamin'] == 'Laki - Laki' %} checked {% endif %}>
+                        <label class="form-check-label" for="Laki-Laki">Laki - Laki</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="jenis_kelamin" id="Perempuan" value="Perempuan" {% if siswa['jenis_kelamin'] == 'Perempuan' %} checked {% endif %}>
+                        <label class="form-check-label" for="Perempuan">Perempuan</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="sekolah_asal" class="form-label">Asal Sekolah</label>
+                    <input type="text" value="{{ siswa.sekolah_asal }}" class="form-control w-50" id="sekolah_asal" name="sekolah_asal" required>
+                </div>
+                <div class="mb-3">
+                    <label for="jurusan" class="form-label">Jurusan</label>
+                    <select class="form-select w-50" id="jurusan" name="jurusan" required>
+                        <option disabled selected value>Pilih Jurusan</option>
+                        <option value="IPA"  {% if siswa['jurusan'] == 'IPA' %} selected {% endif %}>IPA</option>
+                        <option value="IPS"  {% if siswa['jurusan'] == 'IPS' %} selected {% endif %}>IPS</option>
+                        <option value="BAHASA"  {% if siswa['jurusan'] == 'BAHASA' %} selected {% endif %}>BAHASA</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="kontak" class="form-label">Kontak</label>
+                    <input type="number" value="{{ siswa.kontak }}" class="form-control w-50" id="kontak" name="kontak" required>
+                </div>
+                <div class="mb-3">
+                    <label for="gambar" class="form-label">Gambar <i>(Saat ini)</i></label> <br>
+                    <img src="{{ url_for('static', filename=siswa['gambar'].replace('static', '')) }}" width="50%" style="margin-bottom: 10px;">
+                    <input class="form-control form-control-sm w-50" id="gambar" name="gambar" type="file">
+                </div>
+                <div class="mb-3">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <textarea class="form-control w-50" id="alamat" name="alamat" rows="5" required>{{ siswa['alamat'] }}</textarea>
+                </div>
+                <hr>
+                <a href="/user" class="btn btn-secondary">Kembali</a>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
+           </div>
+   </div>
+   </main>
+</body>
+   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</html>
