@@ -22,6 +22,11 @@ app.secret_key = 'e1842e8c4bde416b66e51224fe8864e9'
 def login():
     return render_template('/auth/login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
 @app.route('/verifikasi-login', methods=['POST'])
 def verifikasiLogin():
     if request.method == 'POST':
@@ -31,11 +36,9 @@ def verifikasiLogin():
         connection = create_connection()
         cursor = connection.cursor()
 
+        # Check if the user is an admin
         cursor.execute('SELECT * FROM admin WHERE email = %s AND password = %s', (email, password))
         admin = cursor.fetchone()
-        cursor.close()
-
-        connection.close()
 
         if admin:
             admin_session_data = {
@@ -46,8 +49,24 @@ def verifikasiLogin():
             flash('Login berhasil. Selamat datang!', 'success')
             return redirect('/dashboard')  # Sesuaikan dengan rute dashboard yang sesuai
         else:
-            flash('Email atau password salah', 'error')
-            return redirect('/')
+            # Check if the user is a student
+            cursor.execute('SELECT * FROM siswa WHERE email = %s AND password = %s', (email, password))
+            student = cursor.fetchone()
+
+            if student:
+                student_session_data = {
+                    'id': student['id_siswa'],
+                    'email': student['email']
+                }
+                session['id_siswa'] = student_session_data['id']
+                flash('Login berhasil. Selamat datang!', 'success')
+                return redirect('/student-dashboard')  # Sesuaikan dengan rute dashboard siswa yang sesuai
+            else:
+                flash('Email atau password salah', 'error')
+                return redirect('/')
+
+    cursor.close()
+    connection.close()
 
 @app.route('/register')
 def register():
