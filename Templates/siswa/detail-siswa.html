@@ -59,7 +59,13 @@
             </tr>
             <tr>
                 <th width="40%">Tempat dan Tanggal Lahir</th>
-                <td width="60%">{{ siswa.tempat_lahir }}, {{ siswa.tanggal_lahir.strftime('%d %b %Y') }}</td>
+                <td width="60%">
+                {% if siswa.tanggal_lahir %}
+                    {{ siswa.tempat_lahir }}, {{ siswa.tanggal_lahir.strftime('%d %b %Y') }}
+                {% else %}
+                    {{ siswa.tempat_lahir }}, Belum diisi
+                {% endif %}
+                </td>
             </tr>
             <tr>
                 <th width="40%">Jenis Kelamin</th>

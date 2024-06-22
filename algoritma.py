@@ -9,7 +9,7 @@ for dirname, _, filenames in os.walk('/PPS-Datamining/static'):
     for filename in filenames:
         print(os.path.join(dirname, filename))
 
-df = pd.read_csv("static/nilai-dataset/nilai.csv", encoding='ISO-8859-1')
+df = pd.read_csv("static/nilai-dataset/data.csv", encoding='ISO-8859-1')
 df.head()
 df.describe()
 df.shape
@@ -129,7 +129,7 @@ class LVQ(object):
         weight, label = weight_class
         output = []
         for data in test_data:
-            distance = np.sqrt(np.sum((data - self.weight) ** 2, axis=1))
+            distance = np.sqrt(np.sum((data - weight) ** 2, axis=1))
             idx_min = np.argmin(distance)
             output.append(label[idx_min])
 

@@ -1,0 +1,46 @@
+{% extends "navbar.html" %}
+{% block kontenku %}
+
+  
+  <main id="main">
+    <section id="contact" class="wow fadeInUp">
+      <div class="container">
+        <div class="section-header">
+          <h2>Program Studi</h2>
+        </div>
+        <div class="card-deck">
+          {%for item in prodi%}
+          <div class="col-md-4">
+          <div class="card">
+            <a href="/detail-prodi/{{ item.id_prodi }}">
+            <img class="card-img-top" src="{{ url_for('static', filename=item['gambar'].replace('static', '')) }}" width="40%" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">{{ item.kode }}</h5>
+              <p class="card-text">{{ item.nama }}</p>
+            </div>  
+          </a>
+          </div>
+          <br>
+        </div>
+          {%endfor%}
+          </div>
+          
+        <div class="row contact-info">
+          
+          <div class="col-md-4">
+    
+              <h3></h3>
+            </div>
+          </div>
+          
+          <hr>
+  
+          </div>
+      </div>
+
+      </div>
+    </section><!-- #contact -->
+
+  </main>
+
+{%endblock%}

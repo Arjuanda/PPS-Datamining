@@ -1,0 +1,110 @@
+{% extends "navbar.html" %}
+{% block kontenku %}
+
+  <!--==========================
+    Intro Section
+  ============================-->
+  <section id="intro">
+
+    <div class="intro-content">
+      <h2>Selamat Datang<br>Calon<span>Maba</span></h2>
+      <div>
+        <a href="#about" class="btn-get-started scrollto">Get Started</a>
+        <a href="#portfolio" class="btn-projects scrollto">Our Projects</a>
+      </div>
+    </div>
+
+    <div id="intro-carousel" class="owl-carousel" >
+      <div class="item" style="background-image: url('img/intro-carousel/1.jpg');"></div>
+      <div class="item" style="background-image: url('img/intro-carousel/2.jpg');"></div>
+      <div class="item" style="background-image: url('img/intro-carousel/3.jpg');"></div>
+      <div class="item" style="background-image: url('img/intro-carousel/4.jpg');"></div>
+      <div class="item" style="background-image: url('img/intro-carousel/5.jpg');"></div>
+    </div>
+  </section><!-- #intro -->
+  <!--==========================
+      Services Section
+    ============================-->
+    <section id="services">
+      <div class="container">
+        <div class="section-header">
+          <h2>Memperkenalkan PPS-Datamining</h2>
+          <p>Penentuan program studi berdasarkan nilai siswa dengan algoritma data mining melibatkan penggunaan teknik-teknik data mining untuk menganalisis pola-pola dalam data nilai siswa dan memprediksi program studi yang paling cocok untuk setiap siswa berdasarkan karakteristik mereka.
+          </p>
+          <p>
+            Pada aplikasi ini akan ada 2 pengguna, yaitu admin dan calon mahasiswa. Aplikasi ini akan menyediakan menu login, dimana  pengguna bisa mendaftar untuk pendataan sebagai calon mahasiswa yang sedang memilih program studi yang akan dijalani dengan memberikan data nilai yang menjadi acuan oleh sistem dalam merekomendasikan Program Studi kepada pengguna.
+          </p>
+        </div>
+      </div>
+    </section><!-- #services -->
+  <section id="team" class="wow fadeInUp">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-6">
+          <div class="member">
+            <div class="pic"><img src="{{ url_for('static', filename='img/team-1.jpg') }}" alt=""></div>
+            <div class="details">
+              <h4>Walter White</h4>
+              <span>Chief Executive Officer</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="member">
+            <div class="pic"><img src="{{ url_for('static', filename='img/team-2.jpg') }}" alt=""></div>
+            <div class="details">
+              <h4>Sarah Jhinson</h4>
+              <span>Product Manager</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="member">
+            <div class="pic"><img src="{{ url_for('static', filename='img/team-3.jpg') }}" alt=""></div>
+            <div class="details">
+              <h4>William Anderson</h4>
+              <span>CTO</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="member">
+            <div class="pic"><img src="{{ url_for('static', filename='img/team-4.jpg') }}" alt=""></div>
+            <div class="details">
+              <h4>Amanda Jepson</h4>
+              <span>Accountant</span>
+              <div class="social">
+                <a href=""><i class="fa fa-twitter"></i></a>
+                <a href=""><i class="fa fa-facebook"></i></a>
+                <a href=""><i class="fa fa-google-plus"></i></a>
+                <a href=""><i class="fa fa-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section><!-- #team -->
+  {% endblock %}

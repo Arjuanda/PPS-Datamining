@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import pymysql
 import os
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+import logging
 
 
 app = Flask(__name__)
@@ -21,6 +23,58 @@ app.secret_key = 'e1842e8c4bde416b66e51224fe8864e9'
 @app.route('/', methods=['GET'])
 def login():
     return render_template('/auth/login.html')
+
+@app.route('/reg', methods=['GET'])
+def reg():
+    return render_template('/auth/register.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        try:
+            nisn = request.form.get('nisn')
+            nama = request.form.get('nama')
+            email = request.form.get('email')
+            password = request.form.get('password')
+            hashed_password = generate_password_hash(password)
+            gambar = None
+            logging.debug(f"Received form data: NISN={nisn}, Nama={nama}, Email={email}")
+
+            if 'gambar' in request.files:
+                file = request.files['gambar']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    gambar = file_path.replace('\\', '/')
+                    logging.debug(f"File uploaded: {gambar}")
+
+            if not gambar:
+                gambar = get_default_image()
+                logging.debug(f"Using default image: {gambar}")
+
+
+            connection = create_connection()
+            cursor = connection.cursor()
+
+            cursor.execute("""
+                INSERT INTO siswa (nisn, nama, email, password, tempat_lahir, tanggal_lahir, jenis_kelamin, sekolah_asal, jurusan, kontak, alamat, gambar)
+                VALUES (%s, %s, %s, %s, NULL, NULL, NULL, NULL, NULL, NULL, NULL, %s)
+            """, (nisn, nama, email, hashed_password, gambar))
+
+            connection.commit()
+            cursor.close()
+            connection.close()
+
+            logging.debug("Database insertion successful")
+            flash('Pendaftaran Berhasil!', 'success')
+            return redirect(url_for('data_user'))
+        except Exception as e:
+            logging.error(f"Error during registration: {e}")
+            flash(f'Error: {e}', 'danger')
+            return render_template('auth/register.html')
+    else:
+        return render_template('auth/register.html')
 
 @app.route('/logout')
 def logout():
@@ -60,17 +114,13 @@ def verifikasiLogin():
                 }
                 session['id_siswa'] = student_session_data['id']
                 flash('Login berhasil. Selamat datang!', 'success')
-                return redirect('/student-dashboard')  # Sesuaikan dengan rute dashboard siswa yang sesuai
+                return redirect('/siswa-dashboard')  # Sesuaikan dengan rute dashboard siswa yang sesuai
             else:
                 flash('Email atau password salah', 'error')
                 return redirect('/')
 
     cursor.close()
     connection.close()
-
-@app.route('/register')
-def register():
-    return render_template('/auth/register.html')
 
 def count_item_siswa():
     connection = create_connection()
@@ -134,6 +184,7 @@ def dashboard():
         JOIN admin ON log.id_admin = admin.id_admin
         ORDER BY log.timestamp DESC
         ''')
+        
         logs = cursor.fetchall()
         cursor.close()
         connection.close()
@@ -141,7 +192,33 @@ def dashboard():
     else:
         return redirect('/')
     
+@app.route('/siswa-dashboard', methods=['GET'])
+def siswa_dashboard():
+    return render_template ('front/index.html')
 
+@app.route('/detail-prodi/<int:id>', methods=['GET'])
+def deatil_prodi2(id):
+    connection = create_connection()
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM prodi WHERE id_prodi = %s', (id,))
+    siswa = cursor.fetchone()
+    if not siswa:
+        return 'Prodi not found', 404
+    return render_template('front/index3.html', siswa=siswa)
+
+
+@app.route('/card-prodi', methods=['GET'])
+def siswa_prodi():
+    connection = create_connection()
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT id_prodi, nama, kode, link, gambar FROM prodi ORDER BY id_prodi DESC')
+    data_prodi = cursor.fetchall()
+    cursor.close()
+
+    connection.close()
+
+    return render_template('/front/index2.html', prodi=data_prodi)
 
 #User
 
@@ -259,19 +336,18 @@ def edit_siswa(id):
             alamat = request.form['alamat']
             gambar = None
 
-            if 'gambar' in request.files:
+            if 'gambar' in request.files and request.files['gambar'].filename != '':
                 file = request.files['gambar']
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                     file.save(file_path)
-                    gambar = file_path
                     gambar = file_path.replace('\\', '/')
-
-            if not gambar and 'gambarLama' in request.form:
-                gambar = request.form['gambarLama'].replace('\\', '/')
             else:
-                gambar = get_default_image()
+                if 'gambarLama' in request.form:
+                    gambar = request.form['gambarLama'].replace('\\', '/')
+                else:
+                    gambar = get_default_image()
 
             connection = create_connection()
             cursor = connection.cursor()
@@ -401,19 +477,18 @@ def edit_admin(id):
             alamat = request.form['alamat']
             gambar = None
 
-            if 'gambar' in request.files:
+            if 'gambar' in request.files and request.files['gambar'].filename != '':
                 file = request.files['gambar']
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                     file.save(file_path)
-                    gambar = file_path
                     gambar = file_path.replace('\\', '/')
-
-            if not gambar and 'gambarLama' in request.form:
-                gambar = request.form['gambarLama'].replace('\\', '/')
             else:
-                gambar = get_default_image()
+                if 'gambarLama' in request.form:
+                    gambar = request.form['gambarLama'].replace('\\', '/')
+                else:
+                    gambar = get_default_image()
 
             connection = create_connection()
             cursor = connection.cursor()
@@ -499,56 +574,57 @@ def data_nilai():
 
 @app.route('/nilai/edit/<int:id>', methods=('GET', 'POST'))
 def edit_nilai(id):
-    connection = create_connection()
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM nilai WHERE id_nilai = %s', (id,))
-    nilai = cursor.fetchone()
+    if 'id_admin' in session:
+        connection = create_connection()
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM nilai WHERE id_nilai = %s', (id,))
+        nilai = cursor.fetchone()
 
-    cursor.execute('SELECT nama FROM siswa WHERE id_siswa = %s', (nilai['id_siswa'],))
-    siswa = cursor.fetchone()
-    if siswa:
-        nama = siswa['nama']
-    else:
-        nama = None
+        cursor.execute('SELECT nama FROM siswa WHERE id_siswa = %s', (nilai['id_siswa'],))
+        siswa = cursor.fetchone()
+        if siswa:
+            nama = siswa['nama']
+        else:
+            nama = None
 
-    if request.method == 'POST':
-        x1 = request.form.get('x1')
-        x2 = request.form.get('x2')
-        x3 = request.form.get('x3')
-        x4 = request.form.get('x4')
-        x5 = request.form.get('x5')
-        x6 = request.form.get('x6')
-        x7 = request.form.get('x7')
-        x8 = request.form.get('x8')
-        x9 = request.form.get('x9')
-        x10 = request.form.get('x10')
+        if request.method == 'POST':
+            x1 = request.form.get('x1')
+            x2 = request.form.get('x2')
+            x3 = request.form.get('x3')
+            x4 = request.form.get('x4')
+            x5 = request.form.get('x5')
+            x6 = request.form.get('x6')
+            x7 = request.form.get('x7')
+            x8 = request.form.get('x8')
+            x9 = request.form.get('x9')
+            x10 = request.form.get('x10')
 
-        x1 = x1 if x1 else 0
-        x2 = x2 if x2 else 0
-        x3 = x3 if x3 else 0
-        x4 = x4 if x4 else 0
-        x5 = x5 if x5 else 0
-        x6 = x6 if x6 else 0
-        x7 = x7 if x7 else 0
-        x8 = x8 if x8 else 0
-        x9 = x9 if x9 else 0
-        x10 = x10 if x10 else 0
+            x1 = x1 if x1 else 0
+            x2 = x2 if x2 else 0
+            x3 = x3 if x3 else 0
+            x4 = x4 if x4 else 0
+            x5 = x5 if x5 else 0
+            x6 = x6 if x6 else 0
+            x7 = x7 if x7 else 0
+            x8 = x8 if x8 else 0
+            x9 = x9 if x9 else 0
+            x10 = x10 if x10 else 0
 
-        cursor.execute('UPDATE nilai SET x1 = %s, x2 = %s, x3 = %s, x4 = %s, x5 = %s, x6 = %s, x7 = %s, x8 = %s, x9 = %s, x10 = %s WHERE id_nilai = %s', (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, id))
-        connection.commit()
+            cursor.execute('UPDATE nilai SET x1 = %s, x2 = %s, x3 = %s, x4 = %s, x5 = %s, x6 = %s, x7 = %s, x8 = %s, x9 = %s, x10 = %s WHERE id_nilai = %s', (x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, id))
+            connection.commit()
+            connection.close()
+
+            id_admin = session['id_admin']
+            action = f"Editted Nilai: {nama}"
+            log_activity(id_admin, action)
+
+            return redirect(url_for('data_nilai'))
+
+        cursor.execute('SELECT * FROM siswa')
+        siswa = cursor.fetchall()
         connection.close()
 
-        id_admin = session['id_admin']
-        action = f"Editted Nilai: {nama}"
-        log_activity(id_admin, action)
-
-        return redirect(url_for('data_nilai'))
-
-    cursor.execute('SELECT * FROM siswa')
-    siswa = cursor.fetchall()
-    connection.close()
-
-    return render_template('/nilai/edit-nilai.html', nilai=nilai, siswa=siswa)
+        return render_template('/nilai/edit-nilai.html', nilai=nilai, siswa=siswa)
     
 
 #Prodi
@@ -568,115 +644,117 @@ def data_prodi():
 
 @app.route('/prodi/tambah', methods=['GET', 'POST'])
 def tambah_prodi():
-    if request.method == 'POST':
-        nama = request.form['nama']
-        kode = request.form['kode']
-        link = request.form['link']
-        gambar = None
+    if 'id_admin' in session:
+        if request.method == 'POST':
+            nama = request.form['nama']
+            kode = request.form['kode']
+            link = request.form['link']
+            gambar = None
 
-        if 'gambar' in request.files:
-            file = request.files['gambar']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                gambar = file_path
-                gambar = file_path.replace('\\', '/')
+            if 'gambar' in request.files:
+                file = request.files['gambar']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    gambar = file_path
+                    gambar = file_path.replace('\\', '/')
 
 
-            if not gambar:
-                gambar = get_default_image2()
+                if not gambar:
+                    gambar = get_default_image2()
 
-        connection = create_connection()
-        cursor = connection.cursor()
+            connection = create_connection()
+            cursor = connection.cursor()
 
-        cursor.execute("INSERT INTO prodi (nama, kode, link, gambar) VALUES (%s, %s, %s, %s)",
-                    (nama, kode, link, gambar))
-        connection.commit()
-        cursor.close()
-        connection.close()
+            cursor.execute("INSERT INTO prodi (nama, kode, link, gambar) VALUES (%s, %s, %s, %s)",
+                        (nama, kode, link, gambar))
+            connection.commit()
+            cursor.close()
+            connection.close()
 
-        id_admin = session['id_admin']
-        action = f"Added: {nama}"
-        log_activity(id_admin, action)
+            id_admin = session['id_admin']
+            action = f"Added: {nama}"
+            log_activity(id_admin, action)
 
-        flash('Program Studi berhasil ditambahkan!', 'success')
-        return redirect(url_for('data_prodi'))
-    else:
-        return render_template('prodi/tambah-prodi.html')
+            flash('Program Studi berhasil ditambahkan!', 'success')
+            return redirect(url_for('data_prodi'))
+        else:
+            return render_template('prodi/tambah-prodi.html')
 
 @app.route('/prodi/edit/<int:id>', methods=['GET', 'POST'])
 def edit_prodi(id):
-    if request.method == 'POST':
-        nama = request.form['nama']
-        kode = request.form['kode']
-        link = request.form['link']
-        gambar = None
+    if 'id_admin' in session:
+        if request.method == 'POST':
+            nama = request.form['nama']
+            kode = request.form['kode']
+            link = request.form['link']
+            gambar = None
 
-        if 'gambar' in request.files:
-            file = request.files['gambar']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(file_path)
-                gambar = file_path
-                gambar = file_path.replace('\\', '/')
-
-            if not gambar and 'gambarLama' in request.form:
-                gambar = request.form['gambarLama'].replace('\\', '/')
+            if 'gambar' in request.files and request.files['gambar'].filename != '':
+                file = request.files['gambar']
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
+                    gambar = file_path.replace('\\', '/')
             else:
-                gambar = get_default_image2()
+                if 'gambarLama' in request.form:
+                    gambar = request.form['gambarLama'].replace('\\', '/')
+                else:
+                    gambar = get_default_image2()
 
-        connection = create_connection()
-        cursor = connection.cursor()
+            connection = create_connection()
+            cursor = connection.cursor()
 
-        cursor.execute("""
-            UPDATE prodi
-            SET nama = %s, kode = %s, link = %s, gambar = %s
-            WHERE id_prodi = %s
-        """, (nama, kode, link, gambar, id))
-        connection.commit()
-        cursor.close()
-        connection.close()
+            cursor.execute("""
+                UPDATE prodi
+                SET nama = %s, kode = %s, link = %s, gambar = %s
+                WHERE id_prodi = %s
+            """, (nama, kode, link, gambar, id))
+            connection.commit()
+            cursor.close()
+            connection.close()
 
-        id_admin = session['id_admin']
-        action = f"Editted: {nama}"
-        log_activity(id_admin, action)
+            id_admin = session['id_admin']
+            action = f"Editted: {nama}"
+            log_activity(id_admin, action)
 
-        flash('Program Studi berhasil diubah!', 'success')
-        return redirect(url_for('data_prodi'))
-    else:
-        connection = create_connection()
-        cursor = connection.cursor()
+            flash('Program Studi berhasil diubah!', 'success')
+            return redirect(url_for('data_prodi'))
+        else:
+            connection = create_connection()
+            cursor = connection.cursor()
 
-        cursor.execute("SELECT * FROM prodi WHERE id_prodi = %s", (id,))
-        data_prodi = cursor.fetchone()
-        cursor.close()
-        connection.close()
+            cursor.execute("SELECT * FROM prodi WHERE id_prodi = %s", (id,))
+            data_prodi = cursor.fetchone()
+            cursor.close()
+            connection.close()
 
-        return render_template('prodi/edit-prodi.html', prodi=data_prodi)
+            return render_template('prodi/edit-prodi.html', prodi=data_prodi)
 
 @app.route('/prodi/delete/<int:id>', methods=['GET'])
 def delete_prodi(id):
-    connection = create_connection()
-    cursor = connection.cursor()
-    
-    cursor.execute('SELECT nama FROM admin WHERE id_admin = %s', (id,))
-    admin = cursor.fetchone()
-    if admin:
-        nama = admin['nama']
+    if 'id_admin' in session:
+        connection = create_connection()
+        cursor = connection.cursor()
+        
+        cursor.execute('SELECT nama FROM prodi WHERE id_prodi = %s', (id,))
+        admin = cursor.fetchone()
+        if admin:
+            nama = admin['nama']
 
-        cursor.execute('DELETE FROM prodi WHERE id_prodi = %s', (id,))
-        connection.commit()
-        cursor.close()
-        connection.close()
+            cursor.execute('DELETE FROM prodi WHERE id_prodi = %s', (id,))
+            connection.commit()
+            cursor.close()
+            connection.close()
 
-        id_admin = session['id_admin']
-        action = f"Deleted: {nama}"
-        log_activity(id_admin, action)
+            id_admin = session['id_admin']
+            action = f"Deleted: {nama}"
+            log_activity(id_admin, action)
 
-        flash('Program Studi berhasil dihapus!', 'success')
-        return redirect(url_for('data_prodi'))
+            flash('Program Studi berhasil dihapus!', 'success')
+            return redirect(url_for('data_prodi'))
 
 
 if __name__ == '__main__':
