@@ -4,6 +4,15 @@ import os
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import logging
+import pickle
+import joblib
+import numpy as np
+from collections import Counter
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+from LVQClassifier import LVQClassifier
+from sklearn.metrics import accuracy_score
 
 
 app = Flask(__name__)
@@ -36,7 +45,6 @@ def register():
             nama = request.form.get('nama')
             email = request.form.get('email')
             password = request.form.get('password')
-            hashed_password = generate_password_hash(password)
             gambar = None
             logging.debug(f"Received form data: NISN={nisn}, Nama={nama}, Email={email}")
 
@@ -60,7 +68,7 @@ def register():
             cursor.execute("""
                 INSERT INTO siswa (nisn, nama, email, password, tempat_lahir, tanggal_lahir, jenis_kelamin, sekolah_asal, jurusan, kontak, alamat, gambar)
                 VALUES (%s, %s, %s, %s, NULL, NULL, NULL, NULL, NULL, NULL, NULL, %s)
-            """, (nisn, nama, email, hashed_password, gambar))
+            """, (nisn, nama, email, password, gambar))
 
             connection.commit()
             cursor.close()
@@ -184,14 +192,76 @@ def dashboard():
         JOIN admin ON log.id_admin = admin.id_admin
         ORDER BY log.timestamp DESC
         ''')
-        
+
         logs = cursor.fetchall()
         cursor.close()
         connection.close()
         return render_template('dashboard.html', count_siswa=siswa, count_user=user, count_nilai=nilai, count_prodi=prodi, logs = logs)
     else:
         return redirect('/')
-    
+
+def get_siswa_by_id(id):
+    connection = create_connection()
+    try:
+        with connection.cursor() as cursor:
+            query = 'SELECT * FROM siswa WHERE id_siswa = %s'
+            cursor.execute(query, (id,))
+            siswa = cursor.fetchone()
+            return siswa
+    finally:
+        connection.close()
+
+# Konfigurasi Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'verifikasiLogin'
+
+# Contoh model pengguna sederhana
+class User(UserMixin):
+    def __init__(self, id_siswa):
+        self.id = id_siswa
+
+# Fungsi untuk mencari pengguna berdasarkan ID
+@login_manager.user_loader
+def load_user(id_siswa):
+    connection = create_connection()
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT * FROM siswa WHERE id_siswa = %s', (id_siswa,))
+            user = cursor.fetchone()
+            if user:
+                return User(id_siswa)
+    finally:
+        connection.close()
+    return None
+
+@app.route('/profile')
+@login_required
+def profile():
+    connection = create_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            # Ambil data profil siswa berdasarkan ID pengguna yang sedang login
+            sql = 'SELECT * FROM siswa WHERE id_siswa = %s'
+            cursor.execute(sql, (current_user.id,))
+            siswa = cursor.fetchone()
+
+            if not siswa:
+                return 'Profil siswa tidak ditemukan', 404
+
+        # Render template 'profile.html' dengan data siswa yang ditemukan
+        return render_template('front/profile.html', siswa=siswa)
+
+    except pymysql.Error as e:
+        print(f'Error: {e}')
+        return 'Terjadi kesalahan dalam mengambil data siswa', 500
+
+    finally:
+        connection.close()  # Tutup koneksi setelah selesai
+
+
+
 @app.route('/siswa-dashboard', methods=['GET'])
 def siswa_dashboard():
     return render_template ('front/index.html')
@@ -757,5 +827,88 @@ def delete_prodi(id):
             return redirect(url_for('data_prodi'))
 
 
+# Load all your models here
+models = {}
+model_files = [
+    "models/model_df_target_1_2_pickle.pkl",
+    "models/model_df_target_4_5_pickle.pkl",
+    "models/model_df_target_6_7_pickle.pkl",
+    "models/model_df_target_8_9_pickle.pkl",
+    "models/model_df_target_10_11_pickle.pkl",
+    "models/model_df_target_12_14_pickle.pkl",
+    "models/model_df_target_14_15_pickle.pkl",
+    "models/model_df_target_17_18_pickle.pkl",
+    "models/model_df_target_19_20_pickle.pkl",
+]
+
+# Create a mapping dictionary from original labels to numeric codes
+label_mapping = {
+    'EM': 1,
+    'IF': 2,
+    'MS': 4,
+    'TPPU': 5,
+    'GM': 6,
+    'ABT': 7,
+    'AM': 8,
+    'AN': 9,
+    'LPI': 10,
+    'RKS': 11,
+    'MK': 12,
+    'TRE': 14,
+    'KP': 15,
+    'ME': 17,
+    'RPE': 18,
+    'WE': 19,
+    'TRPL': 20,
+    'AK': 21
+}
+
+for filename in model_files:
+    with open(filename, 'rb') as f:
+        models[filename] = pickle.load(f)  # Use pickle or joblib based on the file format
+
+@app.route('/prediksi')
+def home():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
+
+    # Extract features from JSON data
+    features = np.array([
+        data['feature1'], data['feature2'], data['feature3'], data['feature4'],
+        data['feature5'], data['feature6'], data['feature7'], data['feature8'],
+        data['feature9'], data['feature10']
+    ]).reshape(1, -1)
+
+    # Extract true labels from the form
+    true_label_code = int(data.get('true_labels', 1))  # Default to EM if not provided
+    true_label = next(key for key, value in label_mapping.items() if value == true_label_code)
+
+    # Initialize containers for predictions and accuracies
+    predictions = {}
+    accuracies = {}
+
+    # Make predictions for each model
+    for key, model in models.items():
+        pred = model.predict(features)
+        predictions[key] = pred.tolist()
+
+        if true_label:
+            true_label_numeric = label_mapping[true_label]
+            accuracy = accuracy_score([true_label_numeric], pred)
+            accuracies[key] = accuracy
+
+    response = {
+        'predictions': predictions,
+        'true_label': true_label
+    }
+
+    if accuracies:
+        response['accuracies'] = accuracies
+
+
+    return jsonify(response)
 if __name__ == '__main__':
     app.run(debug=True, port=9999)

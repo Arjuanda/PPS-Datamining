@@ -1,0 +1,151 @@
+
+<title>Profile Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+      }
+      .header {
+        background-color: #fff;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header h1 {
+        margin: 0;
+      }
+      .header nav a {
+        margin: 0 10px;
+        text-decoration: none;
+        color: #333;
+      }
+      .container {
+        display: flex;
+        margin: 20px;
+      }
+      .content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .profile-photo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .profile-photo img {
+        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        background-color: #ccc; /* Placeholder background color */
+      }
+      .profile-photo input {
+        display: none;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        font-weight: bold;
+      }
+      .form-group input {
+        width: calc(100% - 16px);
+        padding: 8px;
+        margin-top: 5px;
+        box-sizing: border-box;
+      }
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .form-actions button {
+        padding: 10px 20px;
+        border: none;
+        color: white;
+        background-color: #003366;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .form-actions button.edit {
+        background-color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h2>Data Diri Mahasiswa</h2>
+        <div class="profile-photo">
+          <img id="profileImage" src="default-profile.png" alt="Profile Photo" />
+          <br />
+          <label for="profilePhotoInput" class="edit" style="cursor: pointer; color: #003366; text-decoration: underline">Change Photo</label>
+          <input type="file" id="profilePhotoInput" accept="image/*" onchange="previewPhoto()" />
+        </div>
+        <div class="form-group">
+          <label for="nisn">NISN</label>
+          <input type="text" value="{{ siswa.nisn }}" id="nisn" name="nisn" disabled />
+        </div>
+        <div class="form-group">
+          <label for="nama">Nama</label>
+          <input type="text" id="nama" name="nama" disabled />
+        </div>
+        <div class="form-group">
+          <label for="tempat_tanggal_lahir">Tempat Tanggal Lahir</label>
+          <input type="text" id="tempat_tanggal_lahir" name="tempat_tanggal_lahir" disabled />
+        </div>
+        <div class="form-group">
+          <label for="jenis_kelamin">Jenis Kelamin</label>
+          <input type="text" id="jenis_kelamin" name="jenis_kelamin" disabled />
+        </div>
+        <div class="form-group">
+          <label for="jurusan">Jurusan</label>
+          <input type="text" id="jurusan" name="jurusan" disabled />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" disabled />
+        </div>
+        <div class="form-group">
+          <label for="alamat">Alamat</label>
+          <input type="text" id="alamat" name="alamat" disabled />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="edit" onclick="enableEditing()">Edit</button>
+          <button type="button" onclick="updateData()">Update</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function enableEditing() {
+        document.querySelectorAll(".content input").forEach((input) => {
+          input.disabled = false;
+        });
+      }
+
+      function updateData() {
+        // Logic for updating data
+        alert("Data updated successfully!");
+        document.querySelectorAll(".content input").forEach((input) => {
+          input.disabled = true;
+        });
+      }
+
+      function previewPhoto() {
+        const file = document.getElementById("profilePhotoInput").files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("profileImage").src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    </script>
+  </body>
