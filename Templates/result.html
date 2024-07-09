@@ -1,0 +1,165 @@
+<!-- templates/result.html -->
+{% extends "navbar.html" %}
+{% block kontenku %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            
+        }
+        .container3 {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        h2 {
+            color: #333;
+        }
+        .result-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: #f9f9f9;
+        }
+        .result-item h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 13px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #000;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <a href="/prediksi" class="btn btn-secondary" style="float: left; margin-left:10px;">Back to Prediction Form</a>
+    <div class="container3">
+        <h2>Prediction Results</h2>
+        {% for model_name, result in results.items() %}
+            <div class="result-item">
+                <h3>{{ model_name }}</h3>
+                <p>Program Studi: <strong>{{ result.predicted_class }}</strong></p>
+                <!--
+                <p>Probability: <strong>{{ result.probability }}</strong></p>
+                -->
+            </div>
+        {% endfor %}
+        <br>
+        Sesuaikan Kode dengan Program Studi
+        <table>
+            <thead>
+                <tr>
+                    <th>PROGRAM STUDI</th>
+                    <th>KODE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>AKUNTANSI</td>
+                    <td>AK</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK ELEKRONIKA MANUFAKTUR</td>
+                    <td>EM</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK INFORMATIKA</td>
+                    <td>IF</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK INSTRUMENTASI</td>
+                    <td>IN</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK MESIN</td>
+                    <td>MS</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK PERAWATAN PESAWAT UDARA</td>
+                    <td>TPPU</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI GEOMATIKA</td>
+                    <td>GM</td>
+                </tr>
+                <tr>
+                    <td>ADMINISTRASI BISNIS TERAPAN</td>
+                    <td>ABT</td>
+                </tr>
+                <tr>
+                    <td>AKUNTANSI MANAJERIAL</td>
+                    <td>AM</td>
+                </tr>
+                <tr>
+                    <td>ANIMASI</td>
+                    <td>AN</td>
+                </tr>
+                <tr>
+                    <td>LOGISTIK PERDAGANGAN INTERNASIONAL</td>
+                    <td>LPI</td>
+                </tr>
+                <tr>
+                    <td>REKAYASA KEAMANAN SIBER</td>
+                    <td>RKS</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK MEKATRONIKA</td>
+                    <td>MK</td>
+                </tr>
+                <tr>
+                    <td>TEKNIK ROBOTIKA</td>
+                    <td>RE</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA ELEKTRONIKA</td>
+                    <td>TRE</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA KONSTRUKSI PERKAPALAN</td>
+                    <td>KP</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA METALURGI</td>
+                    <td>ME</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA MULTIMEDIA</td>
+                    <td>TRM</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA PEMBANGKIT ENERGI</td>
+                    <td>RPE</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI</td>
+                    <td>WE</td>
+                </tr>
+                <tr>
+                    <td>TEKNOLOGI REKAYASA PERANGKAT LUNAK</td>
+                    <td>TRPL</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </body>
+    {% endblock %}

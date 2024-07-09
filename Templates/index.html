@@ -1,280 +1,85 @@
 {% extends "navbar.html" %}
-{% block kontenku %}
-
-<style>
-    h1 {
-        text-align: center;
-        color: #343a40;
-    }
-
-    form {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    label {
-        font-size: 16px;
-        color: #495057;
-    }
-
-    input, select {
-        padding: 10px;
-        margin: 10px 0;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        border: none;
-        border-radius: 4px;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #0056b3;
-    }
-
-    .container2 {
-        max-width: 600px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .labels {
-        margin-bottom: 20px;
-    }
-
-    .labels ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .labels li {
-        padding: 5px 0;
-        color: #495057;
-    }
-
-    .result {
-        margin-top: 20px;
-        padding: 20px;
-        background-color: #e9ecef;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .prediction, .accuracy {
-        margin-bottom: 10px;
-        font-size: 16px;
-        color: #343a40;
-    }
-
-    .prediction strong, .accuracy strong {
-        color: #007bff;
-    }
-</style>
-    <h1>Prediksi Program Studi</h1>
-    
-    <br>
-    <form id="predict-form">
-        <!-- Create input fields for each feature -->
-        <div>
-            <label for="feature1">Matematika:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature1" name="feature1" required><br><br>
-            <label for="feature2">Bahasa Indonesia:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature2" name="feature2" required><br><br>
-            <label for="feature3">Bahasa Inggris:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature3" name="feature3" required><br><br>
-            <label for="feature4">Fisika:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature4" name="feature4" required><br><br>
-            <label for="feature5">Kimia:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature5" name="feature5" required><br><br>
-            <label for="feature6">Biologi:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature6" name="feature6" required><br><br>
-            <label for="feature7">Ekononmi:<br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature7" name="feature7" required><br><br>
-            <label for="feature8">Geografi:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature8" name="feature8" required><br><br>
-            <label for="feature9">Sosiologi:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature9" name="feature9" required><br><br>
-            <label for="feature10">Sejarah:</label><br>
-            <input type="number" min="0" max="1000" step="0.01" id="feature10" name="feature10" required><br><br>
-        </div>
-        <!-- Repeat for other features -->
-        <label for="true-labels">True Labels:</label><br>
-        <select id="true-labels" name="true-labels">
-            <option value="1">TEKNIK ELEKRONIKA MANUFAKTUR (EM)</option>
-            <option value="2">TEKNIK INFORMATIKA (IF)</option>
-            <option value="4">TEKNIK MESIN (MS)</option>
-            <option value="5">TEKNIK PERAWATAN PESAWAT UDARA (TPPU)</option>
-            <option value="6">TEKNOLOGI GEOMATIKA (GM)</option>
-            <option value="7">ADMINISTRASI BISNIS TERAPAN (ABT)</option>
-            <option value="8">AKUNTANSI MANAJERIAL (AM)</option>
-            <option value="9">ANIMASI (AN)</option>
-            <option value="10">LOGISTIK PERDAGANGAN INTERNASIONAL (LPI)</option>
-            <option value="11">REKAYASA KEAMANAN SIBER (RKS)</option>
-            <option value="12">TEKNIK MEKATRONIKA (MK)</option>
-            <option value="14">TEKNOLOGI REKAYASA ELEKTRONIKA (TRE)</option>
-            <option value="15">TEKNOLOGI REKAYASA KONSTRUKSI PERKAPALAN (KP)</option>
-            <option value="17">TEKNOLOGI REKAYASA METALURGI (ME)</option>
-            <option value="18">TEKNOLOGI REKAYASA PEMBANGKIT ENERGI (RPE)</option>
-            <option value="19">TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI (WE)</option>
-            <option value="20">TEKNOLOGI REKAYASA PERANGKAT LUNAK (TRPL)</option>
-            <option value="21">AKUNTANSI (AK)</option>
-        </select><br><br><br>
-        <button type="submit">Predict</button>
-    </form>
+{% block kontenku %}<!-- templates/index.html -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .container2 {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 2%;
+            margin-bottom: 2%;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            margin-bottom: 10px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
     <div class="container2">
-        <div class="labels">
-            <h1>LABEL</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Program Studi</th>
-                <th>Nomor Identifikasi</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>TEKNIK ELEKRONIKA MANUFAKTUR (EM)</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>TEKNIK INFORMATIKA (IF)</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>TEKNIK MESIN (MS)</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td>TEKNIK PERAWATAN PESAWAT UDARA (TPPU)</td>
-                <td>5</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI GEOMATIKA (GM)</td>
-                <td>6</td>
-            </tr>
-            <tr>
-                <td>ADMINISTRASI BISNIS TERAPAN (ABT)</td>
-                <td>7</td>
-            </tr>
-            <tr>
-                <td>AKUNTANSI MANAJERIAL (AM)</td>
-                <td>8</td>
-            </tr>
-            <tr>
-                <td>ANIMASI (AN)</td>
-                <td>9</td>
-            </tr>
-            <tr>
-                <td>LOGISTIK PERDAGANGAN INTERNASIONAL (LPI)</td>
-                <td>10</td>
-            </tr>
-            <tr>
-                <td>REKAYASA KEAMANAN SIBER (RKS)</td>
-                <td>11</td>
-            </tr>
-            <tr>
-                <td>TEKNIK MEKATRONIKA (MK)</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA ELEKTRONIKA (TRE)</td>
-                <td>14</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA KONSTRUKSI PERKAPALAN (KP)</td>
-                <td>15</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA METALURGI (ME)</td>
-                <td>17</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA PEMBANGKIT ENERGI (RPE)</td>
-                <td>18</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA PENGELASAN DAN FABRIKASI (WE)</td>
-                <td>19</td>
-            </tr>
-            <tr>
-                <td>TEKNOLOGI REKAYASA PERANGKAT LUNAK (TRPL)</td>
-                <td>20</td>
-            </tr>
-            <tr>
-                <td>AKUNTANSI (AK)</td>
-                <td>21</td>
-            </tr>
-        </tbody>
-    </table>
-        </div>
-    <div class="result" id="result"></div>
-    
-
-    <script>
-        document.getElementById('predict-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            
-            // Collect feature values
-            const data = {
-                feature1: parseFloat(document.getElementById('feature1').value),
-                feature2: parseFloat(document.getElementById('feature2').value),
-                feature3: parseFloat(document.getElementById('feature3').value),
-                feature4: parseFloat(document.getElementById('feature4').value),
-                feature5: parseFloat(document.getElementById('feature5').value),
-                feature6: parseFloat(document.getElementById('feature6').value),
-                feature7: parseFloat(document.getElementById('feature7').value),
-                feature8: parseFloat(document.getElementById('feature8').value),
-                feature9: parseFloat(document.getElementById('feature9').value),
-                feature10: parseFloat(document.getElementById('feature10').value),
-                true_labels: parseInt(document.getElementById('true-labels').value)  // Get selected true label
-            };
-
-            // Fetch prediction from Flask
-            fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '';
-
-                for (let model in data.predictions) {
-                    const prediction = data.predictions[model];
-
-                    let output = `<div class="prediction"><strong>Model:</strong> ${model} - Prediction: ${prediction}</div>`;
-
-                    resultDiv.innerHTML += output;
-                }
-
-                // Display accuracies if available
-                if (data.accuracies) {
-                    let accuracyOutput = '<div class="accuracy"><strong>Accuracies:</strong><br>';
-                    for (let model in data.accuracies) {
-                        const accuracy = data.accuracies[model];
-                        accuracyOutput += `Model ${model}: ${accuracy}<br>`;
-                    }
-                    accuracyOutput += '</div>';
-                    resultDiv.innerHTML += accuracyOutput;
-                }
-            });
-        });
-    </script>
-{%endblock%}
+        <h2>Academic Performance Predictor</h2>
+        <form action="/predict" method="post">
+            <label for="Matematika">Matematika:</label>
+            <input type="number" id="Matematika" name="Matematika" required>
+            <label for="BahasaIndonesia">Bahasa Indonesia:</label>
+            <input type="number" id="BahasaIndonesia" name="BahasaIndonesia" required>
+            <label for="BahasaInggris">Bahasa Inggris:</label>
+            <input type="number" id="BahasaInggris" name="BahasaInggris" required>
+            <label for="Fisika">Fisika:</label>
+            <input type="number" id="Fisika" name="Fisika" required>
+            <label for="Kimia">Kimia:</label>
+            <input type="number" id="Kimia" name="Kimia" required>
+            <label for="Biologi">Biologi:</label>
+            <input type="number" id="Biologi" name="Biologi" required>
+            <label for="Ekonomi">Ekonomi:</label>
+            <input type="number" id="Ekonomi" name="Ekonomi" required>
+            <label for="Geografi">Geografi:</label>
+            <input type="number" id="Geografi" name="Geografi" required>
+            <label for="Sosiologi">Sosiologi:</label>
+            <input type="number" id="Sosiologi" name="Sosiologi" required>
+            <label for="Sejarah">Sejarah:</label>
+            <input type="number" id="Sejarah" name="Sejarah" required>
+            <button type="submit">Predict</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

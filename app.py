@@ -13,11 +13,12 @@ from sklearn.model_selection import train_test_split
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from LVQClassifier import LVQClassifier
 from sklearn.metrics import accuracy_score
+import warnings
 
 
 app = Flask(__name__)
 
-def create_connection():
+def create_connection(): 
     connection = pymysql.connect(
         host='localhost',
         user='root',
@@ -827,88 +828,88 @@ def delete_prodi(id):
             return redirect(url_for('data_prodi'))
 
 
-# Load all your models here
+# algoritma
+
+# Ignore version mismatch warnings
+warnings.filterwarnings('ignore')
+
+# Get the directory where this script is located
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Load the trained models
+model_files = ['knn_model.pkl', 'log_reg_model.pkl', 'decision_tree_model.pkl']
+model_names = ['K-Nearest Neighbors', 'Logistic Regression', 'Decision Tree']
 models = {}
-model_files = [
-    "models/model_df_target_1_2_pickle.pkl",
-    "models/model_df_target_4_5_pickle.pkl",
-    "models/model_df_target_6_7_pickle.pkl",
-    "models/model_df_target_8_9_pickle.pkl",
-    "models/model_df_target_10_11_pickle.pkl",
-    "models/model_df_target_12_14_pickle.pkl",
-    "models/model_df_target_14_15_pickle.pkl",
-    "models/model_df_target_17_18_pickle.pkl",
-    "models/model_df_target_19_20_pickle.pkl",
-]
 
-# Create a mapping dictionary from original labels to numeric codes
-label_mapping = {
-    'EM': 1,
-    'IF': 2,
-    'MS': 4,
-    'TPPU': 5,
-    'GM': 6,
-    'ABT': 7,
-    'AM': 8,
-    'AN': 9,
-    'LPI': 10,
-    'RKS': 11,
-    'MK': 12,
-    'TRE': 14,
-    'KP': 15,
-    'ME': 17,
-    'RPE': 18,
-    'WE': 19,
-    'TRPL': 20,
-    'AK': 21
-}
+for model_name, model_file in zip(model_names, model_files):
+    try:
+        models[model_name] = joblib.load(os.path.join(current_dir, 'Models', model_file))
+    except AttributeError as e:
+        print(f"Error loading {model_name} model: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred while loading {model_name} model: {e}")
 
-for filename in model_files:
-    with open(filename, 'rb') as f:
-        models[filename] = pickle.load(f)  # Use pickle or joblib based on the file format
+# Preprocessing function for incoming data
+def preprocess_data(input_data):
+    # Convert input data to DataFrame
+    df = pd.DataFrame(input_data, index=[0])
+    
+    # Assume numerical columns are in the same order as defined in your models
+    numerical_features = ['Matematika', 'BahasaIndonesia', 'BahasaInggris', 
+                          'Fisika', 'Kimia', 'Biologi', 'Ekonomi', 
+                          'Geografi', 'Sosiologi', 'Sejarah']
+    
+    # Ensure numerical features are float64
+    df[numerical_features] = df[numerical_features].astype(np.float64)
+    
+    return df
 
 @app.route('/prediksi')
-def home():
+def index():
     return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
+    if request.method == 'POST':
+        # Get input from the form
+        input_data = {
+            'Matematika': float(request.form['Matematika']),
+            'BahasaIndonesia': float(request.form['BahasaIndonesia']),
+            'BahasaInggris': float(request.form['BahasaInggris']),
+            'Fisika': float(request.form['Fisika']),
+            'Kimia': float(request.form['Kimia']),
+            'Biologi': float(request.form['Biologi']),
+            'Ekonomi': float(request.form['Ekonomi']),
+            'Geografi': float(request.form['Geografi']),
+            'Sosiologi': float(request.form['Sosiologi']),
+            'Sejarah': float(request.form['Sejarah'])
+        }
+        
+        # Preprocess input data
+        input_df = preprocess_data(input_data)
+        
+        # Initialize results dictionary
+        results = {}
+        
+        # Predict using each model
+        for model_name, model in models.items():
+            try:
+                # Predict class probabilities
+                probabilities = model.predict_proba(input_df)
+                predicted_class = model.predict(input_df)[0]
+                probability = round(probabilities[0][np.where(model.classes_ == predicted_class)[0][0]], 2)
+                
+                # Store result
+                results[model_name] = {
+                    'predicted_class': predicted_class,
+                    'probability': probability
+                }
+            except Exception as e:
+                results[model_name] = {
+                    'error': str(e)
+                }
+        
+        return render_template('result.html', results=results)
 
-    # Extract features from JSON data
-    features = np.array([
-        data['feature1'], data['feature2'], data['feature3'], data['feature4'],
-        data['feature5'], data['feature6'], data['feature7'], data['feature8'],
-        data['feature9'], data['feature10']
-    ]).reshape(1, -1)
-
-    # Extract true labels from the form
-    true_label_code = int(data.get('true_labels', 1))  # Default to EM if not provided
-    true_label = next(key for key, value in label_mapping.items() if value == true_label_code)
-
-    # Initialize containers for predictions and accuracies
-    predictions = {}
-    accuracies = {}
-
-    # Make predictions for each model
-    for key, model in models.items():
-        pred = model.predict(features)
-        predictions[key] = pred.tolist()
-
-        if true_label:
-            true_label_numeric = label_mapping[true_label]
-            accuracy = accuracy_score([true_label_numeric], pred)
-            accuracies[key] = accuracy
-
-    response = {
-        'predictions': predictions,
-        'true_label': true_label
-    }
-
-    if accuracies:
-        response['accuracies'] = accuracies
-
-
-    return jsonify(response)
 if __name__ == '__main__':
     app.run(debug=True, port=9999)
